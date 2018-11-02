@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,7 +20,12 @@ public class GreetingController {
 
     @RequestMapping("/greeting")
     public String greeting(@RequestParam(value = "name", defaultValue = "World") String name){
-        return new Greeting(counter.incrementAndGet(), String.format(template,name)).toString();
+
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage usage = memoryMXBean.getHeapMemoryUsage();
+        Long MB = 1024L * 1024L;
+        return usage.getUsed() / MB + "MB/" + usage.getMax() / MB + "MB";
+        //return new Greeting(counter.incrementAndGet(), String.format(template,name)).toString();
     }
 
     private class Greeting{
